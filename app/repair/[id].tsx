@@ -16,7 +16,7 @@ import {
 import { db } from "../../lib/firebase";
 
 export default function RepairDetails() {
-  // 🔒 منع الصفحة على الويب (Netlify)
+  // 🔒 منع الصفحة على الويب
   if (Platform.OS === "web") {
     return <Redirect href="/" />;
   }
@@ -28,9 +28,6 @@ export default function RepairDetails() {
   const SHOP_NAME = "مركز الصيانة الذكي";
   const SHOP_PHONE = "966500000000";
 
-  // =========================
-  // تحميل الطلب
-  // =========================
   const fetchRepair = async () => {
     if (!id) return;
 
@@ -44,9 +41,6 @@ export default function RepairDetails() {
     fetchRepair();
   }, []);
 
-  // =========================
-  // تحديث الحالة
-  // =========================
   const updateStatus = async (status: string) => {
     await updateDoc(doc(db, "repairs", id as string), { status });
     fetchRepair();
@@ -59,9 +53,6 @@ export default function RepairDetails() {
     fetchRepair();
   };
 
-  // =========================
-  // إنشاء PDF
-  // =========================
   const generatePDF = async () => {
     if (!repair) return;
 
@@ -155,7 +146,7 @@ export default function RepairDetails() {
         </TouchableOpacity>
       </View>
 
-      <Modal visible={showImage} transparent={true}>
+      <Modal visible={showImage} transparent>
         <View style={styles.modalContainer}>
           <Image
             source={{ uri: repair.imageBase64 }}
