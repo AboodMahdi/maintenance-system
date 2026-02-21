@@ -1,7 +1,6 @@
 import { Redirect, useRouter } from "expo-router";
 import { addDoc, collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
-// TEST PUSH 123
 import {
   Alert,
   FlatList,
@@ -20,7 +19,7 @@ import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 
 export default function Dashboard() {
-  // 🔒 منع فتح الداشبورد على الويب (Netlify)
+  // 🔒 منع فتح الداشبورد على الويب
   if (Platform.OS === "web") {
     return <Redirect href="/" />;
   }
@@ -116,7 +115,7 @@ export default function Dashboard() {
         );
 
         imageBase64 = `data:image/jpeg;base64,${manipulatedImage.base64}`;
-      } catch (error) {
+      } catch {
         Alert.alert("خطأ", "فشل معالجة الصورة");
       }
     }
@@ -162,10 +161,11 @@ export default function Dashboard() {
     .filter((r) => r.paymentStatus === "Paid")
     .reduce((sum, r) => sum + (r.finalPrice || 0), 0);
 
-  const filteredRepairs = repairs.filter((item) =>
-    item.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-    item.phone?.includes(search) ||
-    String(item.orderNumber).includes(search)
+  const filteredRepairs = repairs.filter(
+    (item) =>
+      item.customerName?.toLowerCase().includes(search.toLowerCase()) ||
+      item.phone?.includes(search) ||
+      String(item.orderNumber).includes(search)
   );
 
   const renderInput = (placeholder: string, key: string) => (
@@ -234,9 +234,7 @@ export default function Dashboard() {
         data={filteredRepairs}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => router.push(`/repair/${item.id}` as any)}
-          >
+          <TouchableOpacity onPress={() => router.push(`/repair/${item.id}` as any)}>
             <View style={styles.card}>
               <Text style={styles.orderNumber}>
                 🧾 رقم الطلب: {item.orderNumber}
@@ -255,8 +253,8 @@ export default function Dashboard() {
       />
     </ScrollView>
   );
-  
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
