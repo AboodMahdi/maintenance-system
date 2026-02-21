@@ -1,16 +1,18 @@
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { addDoc, collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
+// TEST PUSH 123
 import {
-    Alert,
-    FlatList,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  FlatList,
+  Image,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { db } from "../lib/firebase";
 
@@ -18,6 +20,11 @@ import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 
 export default function Dashboard() {
+  // 🔒 منع فتح الداشبورد على الويب (Netlify)
+  if (Platform.OS === "web") {
+    return <Redirect href="/" />;
+  }
+
   const router = useRouter();
 
   const [repairs, setRepairs] = useState<any[]>([]);
@@ -41,9 +48,6 @@ export default function Dashboard() {
     notes: "",
   });
 
-  // =============================
-  // تحميل الطلبات
-  // =============================
   const fetchRepairs = async () => {
     const snapshot = await getDocs(collection(db, "repairs"));
     const data = snapshot.docs.map((doc) => ({
@@ -61,9 +65,6 @@ export default function Dashboard() {
     setForm({ ...form, [key]: value });
   };
 
-  // =============================
-  // اختيار صورة من المعرض
-  // =============================
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -75,9 +76,6 @@ export default function Dashboard() {
     }
   };
 
-  // =============================
-  // التقاط صورة بالكاميرا
-  // =============================
   const takePhoto = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
@@ -94,9 +92,6 @@ export default function Dashboard() {
     }
   };
 
-  // =============================
-  // إضافة طلب جديد
-  // =============================
   const addRepair = async () => {
     if (!form.customerName || !form.phone || !form.deviceType) {
       Alert.alert("تنبيه", "الرجاء إدخال البيانات الأساسية");
@@ -108,7 +103,6 @@ export default function Dashboard() {
 
     let imageBase64 = null;
 
-    // ✅ ضغط وتحويل الصورة إلى Base64 (بدون Storage)
     if (image) {
       try {
         const manipulatedImage = await ImageManipulator.manipulateAsync(
@@ -162,18 +156,12 @@ export default function Dashboard() {
     fetchRepairs();
   };
 
-  // =============================
-  // إحصائيات
-  // =============================
   const totalOrders = repairs.length;
 
   const totalRevenue = repairs
     .filter((r) => r.paymentStatus === "Paid")
     .reduce((sum, r) => sum + (r.finalPrice || 0), 0);
 
-  // =============================
-  // البحث
-  // =============================
   const filteredRepairs = repairs.filter((item) =>
     item.customerName?.toLowerCase().includes(search.toLowerCase()) ||
     item.phone?.includes(search) ||
@@ -267,8 +255,8 @@ export default function Dashboard() {
       />
     </ScrollView>
   );
+  
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
