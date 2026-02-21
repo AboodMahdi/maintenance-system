@@ -1,21 +1,26 @@
 import * as Print from "expo-print";
-import { useLocalSearchParams } from "expo-router";
+import { Redirect, useLocalSearchParams } from "expo-router";
 import * as Sharing from "expo-sharing";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import {
-    Image,
-    Modal,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Image,
+  Modal,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { db } from "../../lib/firebase";
 
 export default function RepairDetails() {
+  // 🔒 منع الصفحة على الويب (Netlify)
+  if (Platform.OS === "web") {
+    return <Redirect href="/" />;
+  }
+
   const { id } = useLocalSearchParams();
   const [repair, setRepair] = useState<any>(null);
   const [showImage, setShowImage] = useState(false);
@@ -133,7 +138,6 @@ export default function RepairDetails() {
           <Text style={styles.buttonText}>تأكيد الدفع</Text>
         </TouchableOpacity>
 
-        {/* زر عرض الصورة */}
         {repair.imageBase64 && (
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "#2563eb" }]}
@@ -143,7 +147,6 @@ export default function RepairDetails() {
           </TouchableOpacity>
         )}
 
-        {/* زر PDF */}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: "#7c3aed" }]}
           onPress={generatePDF}
@@ -152,7 +155,6 @@ export default function RepairDetails() {
         </TouchableOpacity>
       </View>
 
-      {/* Modal عرض الصورة */}
       <Modal visible={showImage} transparent={true}>
         <View style={styles.modalContainer}>
           <Image
